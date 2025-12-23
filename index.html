@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="لعبة التوقع الذكية - مشروع تخرج باستخدام الذكاء الاصطناعي للتنبؤ بالنتائج">
+    <title>🎮 لعبة التوقع الذكية - مشروع تخرج</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- لوحة التحكم الذكية -->
+    <div class="smart-control-panel" id="controlPanel">
+        <div class="panel-header">
+            <h3><i class="fas fa-cogs"></i> لوحة التحكم الذكية</h3>
+            <button class="panel-close" id="panelCloseBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="control">التحكم</button>
+            <button class="tab-btn" data-tab="sound">الصوت</button>
+            <button class="tab-btn" data-tab="symbols">الرموز</button>
+            <button class="tab-btn" data-tab="backup">النسخ</button>
+            <button class="tab-btn" data-tab="settings">الإعدادات</button>
+            <button class="tab-btn" data-tab="advanced">متقدم</button>
+        </div>
+        
+        <div class="panel-content">
+            <!-- تبويب التحكم -->
+            <div class="tab-content active" id="controlTab">
+                <div class="control-group">
+                    <h4><i class="fas fa-sliders-h"></i> التحكم الذكي</h4>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="smartControlToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">التعليم الذكي</span>
+                        </label>
+                    </div>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="autoDistributeToggle">
+                            <span class="slider"></span>
+                            <span class="label-text">التوزيع التلقائي</span>
+                        </label>
+                    </div>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="riskControlToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">التحكم بالمخاطر</span>
+                        </label>
+                    </div>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="autoBettingToggle">
+                            <span class="slider"></span>
+                            <span class="label-text">المراهنة التلقائية</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-coins"></i> إعدادات الرهان</h4>
+                    <div class="control-item">
+                        <label>عدد الخيارات المسموح بالرهان:</label>
+                        <div class="slider-container">
+                            <input type="range" id="maxOptionsSlider" min="1" max="8" value="6" class="range-slider">
+                            <span id="maxOptionsValue">6</span>
+                        </div>
+                    </div>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="freeBetModeToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">وضع الرهان الحر</span>
+                        </label>
+                    </div>
+                    <div class="control-item">
+                        <label>الحد الأدنى للرهان:</label>
+                        <input type="number" id="minBetAmount" class="form-input" value="10" min="1" max="100">
+                    </div>
+                    <div class="control-item">
+                        <label>الحد الأقصى للرهان:</label>
+                        <input type="number" id="maxBetAmount" class="form-input" value="1000" min="10" max="10000">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-redo"></i> إعادة الضبط</h4>
+                    <div class="reset-buttons">
+                        <button class="reset-btn" id="resetStatsBtn">
+                            <i class="fas fa-chart-bar"></i> إحصائيات اللعبة
+                        </button>
+                        <button class="reset-btn" id="resetPredictionsBtn">
+                            <i class="fas fa-brain"></i> نماذج التعلم
+                        </button>
+                        <button class="reset-btn" id="resetPatternsBtn">
+                            <i class="fas fa-history"></i> أنماط التعلم
+                        </button>
+                        <button class="reset-btn" id="resetAllBtn">
+                            <i class="fas fa-trash-alt"></i> تصفير الكل
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-edit"></i> وضع التعديل</h4>
+                    <div class="edit-controls">
+                        <button class="edit-mode-btn" id="toggleEditMode">
+                            <i class="fas fa-edit"></i> تفعيل وضع التعديل
+                        </button>
+                        <div class="edit-options" id="editOptions" style="display: none;">
+                            <button class="edit-action" id="addBalanceBtn">
+                                <i class="fas fa-plus-circle"></i> +500 رصيد
+                            </button>
+                            <button class="edit-action" id="removeLastResultBtn">
+                                <i class="fas fa-backspace"></i> حذف آخر نتيجة
+                            </button>
+                            <button class="edit-action" id="reorderWheelBtn">
+                                <i class="fas fa-sync-alt"></i> إعادة ترتيب العجلة
+                            </button>
+                            <button class="edit-action" id="forceWinBtn">
+                                <i class="fas fa-trophy"></i> فرض فوز عشوائي
+                            </button>
+                            <button class="edit-action" id="unlockAllBtn">
+                                <i class="fas fa-lock-open"></i> فتح جميع المميزات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب الصوت -->
+            <div class="tab-content" id="soundTab">
+                <div class="control-group">
+                    <h4><i class="fas fa-volume-up"></i> إعدادات الصوت</h4>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="soundToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">تفعيل الصوت</span>
+                        </label>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="autoSoundToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">الصوت التلقائي للشريط الثامن</span>
+                        </label>
+                    </div>
+
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="winSoundToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">صوت الفوز التلقائي</span>
+                        </label>
+                    </div>
+
+                    <div class="control-item">
+                        <label>عدد التكرارات:</label>
+                        <select id="repeatCountSelect" class="form-select">
+                            <option value="1">1 مرة</option>
+                            <option value="2" selected>2 مرات</option>
+                            <option value="3">3 مرات</option>
+                            <option value="5">5 مرات</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <label>نوع الصوت:</label>
+                        <select id="voiceTypeSelect" class="form-select">
+                            <option value="male">رجل</option>
+                            <option value="female">امرأة</option>
+                            <option value="child">طفل</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <label>مستوى الصوت:</label>
+                        <div class="slider-container">
+                            <input type="range" id="volumeSlider" min="0" max="100" value="80" class="range-slider">
+                            <span id="volumeValue">80%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-bell"></i> الإشعارات الصوتية</h4>
+                    <div class="sound-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="soundOnWin" checked>
+                            <span>عند الفوز</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="soundOnLoss">
+                            <span>عند الخسارة</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="soundOnDistribution" checked>
+                            <span>عند التوزيع</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="soundOnPrediction" checked>
+                            <span>عند ظهور تنبؤات</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="soundOnRisk" checked>
+                            <span>عند تغيير المخاطر</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="soundOnStreak">
+                            <span>عند تسجيل سلسلة</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب الرموز -->
+            <div class="tab-content" id="symbolsTab">
+                <div class="control-group">
+                    <h4><i class="fas fa-edit"></i> تحرير رموز العجلة</h4>
+                    <div class="symbols-editor" id="symbolsEditor">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                    <div class="edit-controls" style="margin-top: 15px;">
+                        <button class="edit-action" id="resetSymbolsBtn">
+                            <i class="fas fa-undo"></i>
+                            إعادة تعيين الرموز
+                        </button>
+                        <button class="edit-action" id="randomizeSymbolsBtn">
+                            <i class="fas fa-random"></i>
+                            توليد رموز عشوائية
+                        </button>
+                        <button class="edit-action" id="exportSymbolsBtn">
+                            <i class="fas fa-download"></i>
+                            تصدير الرموز
+                        </button>
+                        <button class="edit-action" id="importSymbolsBtn">
+                            <i class="fas fa-upload"></i>
+                            استيراد رموز
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-star"></i> الرموز الخاصة</h4>
+                    <div class="special-symbols-editor" id="specialSymbolsEditor">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب النسخ الاحتياطي -->
+            <div class="tab-content" id="backupTab">
+                <div class="control-group">
+                    <h4><i class="fas fa-database"></i> نظام النسخ الاحتياطي</h4>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="autoBackupToggle">
+                            <span class="slider"></span>
+                            <span class="label-text">النسخ التلقائي</span>
+                        </label>
+                    </div>
+
+                    <div class="control-item">
+                        <label>فترة النسخ التلقائي:</label>
+                        <select id="backupInterval" class="form-select">
+                            <option value="1">كل دقيقة</option>
+                            <option value="5" selected>كل 5 دقائق</option>
+                            <option value="10">كل 10 دقائق</option>
+                            <option value="30">كل 30 دقيقة</option>
+                        </select>
+                    </div>
+
+                    <div class="backup-info">
+                        <p><i class="fas fa-info-circle"></i> آخر نسخة: <span id="lastBackupTime">لم يتم بعد</span></p>
+                        <p><i class="fas fa-hdd"></i> عدد النسخ: <span id="backupCount">0</span></p>
+                        <p><i class="fas fa-database"></i> حجم التخزين: <span id="backupSize">0 KB</span></p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-save"></i> حفظ البيانات</h4>
+                    <div class="backup-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="saveWinnerData" checked>
+                            <span>بيانات الفائزين</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="savePredictions" checked>
+                            <span>التنبؤات والأشرطة</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="saveBets" checked>
+                            <span>الرهانات والتوزيع</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="saveStats" checked>
+                            <span>الإحصائيات والأداء</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="savePatterns" checked>
+                            <span>أنماط التعلم</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="saveSettings" checked>
+                            <span>إعدادات النظام</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-file-export"></i> تصدير/استيراد</h4>
+                    <div class="backup-actions">
+                        <button class="backup-btn" id="exportBackupBtn">
+                            <i class="fas fa-download"></i> تصدير النسخة
+                        </button>
+                        <button class="backup-btn" id="importBackupBtn">
+                            <i class="fas fa-upload"></i> استيراد نسخة
+                        </button>
+                        <button class="backup-btn" id="clearBackupsBtn">
+                            <i class="fas fa-trash"></i> مسح النسخ القديمة
+                        </button>
+                        <button class="backup-btn" id="backupNowBtn">
+                            <i class="fas fa-save"></i> نسخ احتياطي الآن
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب الإعدادات -->
+            <div class="tab-content" id="settingsTab">
+                <div class="control-group">
+                    <h4><i class="fas fa-palette"></i> التخصيص</h4>
+                    <div class="control-item">
+                        <label>مظهر الواجهة:</label>
+                        <select id="themeSelect" class="form-select">
+                            <option value="light">فاتح</option>
+                            <option value="dark">داكن</option>
+                            <option value="auto">تلقائي</option>
+                            <option value="gradient">متدرج</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>كثافة العرض:</label>
+                        <select id="densitySelect" class="form-select">
+                            <option value="compact">مضغوط</option>
+                            <option value="normal" selected>عادي</option>
+                            <option value="comfortable">مريح</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>نمط الأشرطة:</label>
+                        <select id="barsStyleSelect" class="form-select">
+                            <option value="default">افتراضي</option>
+                            <option value="modern">حديث</option>
+                            <option value="minimal">بسيط</option>
+                            <option value="colorful">ملون</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>لون السمة:</label>
+                        <input type="color" id="themeColor" class="color-picker" value="#0b66ff">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-gamepad"></i> إعدادات اللعبة</h4>
+                    <div class="game-settings">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showAnimations" checked>
+                            <span>عرض الحركات</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showTooltips" checked>
+                            <span>تلميحات الأدوات</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoSaveGame" checked>
+                            <span>الحفظ التلقائي</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="notificationsEnabled" checked>
+                            <span>الإشعارات</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="confirmActions" checked>
+                            <span>تأكيد الإجراءات</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showPredictions" checked>
+                            <span>عرض التنبؤات</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-chart-line"></i> إحصائيات متقدمة</h4>
+                    <div class="control-item">
+                        <label>عرض الإحصائيات:</label>
+                        <select id="statsDisplay" class="form-select">
+                            <option value="simple">بسيط</option>
+                            <option value="detailed" selected>مفصل</option>
+                            <option value="advanced">متقدم</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>تحديث الإحصائيات كل:</label>
+                        <select id="statsRefresh" class="form-select">
+                            <option value="1">1 ثانية</option>
+                            <option value="5" selected>5 ثواني</option>
+                            <option value="10">10 ثواني</option>
+                            <option value="30">30 ثانية</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-info-circle"></i> معلومات النظام</h4>
+                    <div class="system-info">
+                        <p><i class="fas fa-code-branch"></i> الإصدار: 4.0.0</p>
+                        <p><i class="fas fa-calendar"></i> تاريخ البناء: 2024</p>
+                        <p><i class="fas fa-user-graduate"></i> مشروع تخرج</p>
+                        <p><i class="fas fa-brain"></i> النماذج الذكية: 8 خوارزميات</p>
+                        <p><i class="fas fa-memory"></i> الذاكرة: <span id="memoryUsage">0 MB</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب المتقدم -->
+            <div class="tab-content" id="advancedTab">
+                <div class="control-group">
+                    <h4><i class="fas fa-microchip"></i> أداء النظام</h4>
+                    <div class="control-item">
+                        <label>جودة الرسوم:</label>
+                        <select id="graphicsQuality" class="form-select">
+                            <option value="low">منخفض</option>
+                            <option value="medium" selected>متوسط</option>
+                            <option value="high">عالي</option>
+                            <option value="ultra">فائق</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>سرعة التحديث:</label>
+                        <select id="refreshRate" class="form-select">
+                            <option value="30">30 إطار/ثانية</option>
+                            <option value="60" selected>60 إطار/ثانية</option>
+                            <option value="120">120 إطار/ثانية</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>ذاكرة التخزين المؤقت:</label>
+                        <div class="slider-container">
+                            <input type="range" id="cacheSizeSlider" min="10" max="500" value="100" class="range-slider">
+                            <span id="cacheSizeValue">100 MB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-robot"></i> إعدادات الذكاء الاصطناعي</h4>
+                    <div class="control-item">
+                        <label>مستوى الذكاء:</label>
+                        <select id="aiLevel" class="form-select">
+                            <option value="1">مبتدئ</option>
+                            <option value="2" selected>متوسط</option>
+                            <option value="3">متقدم</option>
+                            <option value="4">خبير</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>سرعة التعلم:</label>
+                        <div class="slider-container">
+                            <input type="range" id="learningRateSlider" min="1" max="100" value="50" class="range-slider">
+                            <span id="learningRateValue">50%</span>
+                        </div>
+                    </div>
+                    <div class="control-item">
+                        <label>حجم الذاكرة:</label>
+                        <div class="slider-container">
+                            <input type="range" id="memorySizeSlider" min="10" max="1000" value="100" class="range-slider">
+                            <span id="memorySizeValue">100 سجل</span>
+                        </div>
+                    </div>
+                    <div class="control-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="deepLearningToggle" checked>
+                            <span class="slider"></span>
+                            <span class="label-text">التعلم العميق</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-cogs"></i> إعدادات متقدمة</h4>
+                    <div class="game-settings">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableExperimental">
+                            <span>المميزات التجريبية</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableDebug">
+                            <span>وضع التصحيح</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableLogging">
+                            <span>تسجيل الأحداث</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableAnalytics">
+                            <span>تحليلات الأداء</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h4><i class="fas fa-tools"></i> أدوات النظام</h4>
+                    <div class="reset-buttons">
+                        <button class="reset-btn" id="clearCacheBtn">
+                            <i class="fas fa-broom"></i> مسح الذاكرة المؤقتة
+                        </button>
+                        <button class="reset-btn" id="optimizeSystemBtn">
+                            <i class="fas fa-tachometer-alt"></i> تحسين الأداء
+                        </button>
+                        <button class="reset-btn" id="diagnoseSystemBtn">
+                            <i class="fas fa-stethoscope"></i> تشخيص النظام
+                        </button>
+                        <button class="reset-btn" id="exportLogsBtn">
+                            <i class="fas fa-file-alt"></i> تصدير السجلات
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تذييل لوحة التحكم -->
+        <div class="panel-footer">
+            <div class="footer-actions">
+                <button class="footer-action-btn save-btn" id="saveSettingsBtn">
+                    <i class="fas fa-save"></i>
+                    <span>حفظ التعديلات</span>
+                </button>
+                <button class="footer-action-btn cancel-btn" id="cancelChangesBtn">
+                    <i class="fas fa-times"></i>
+                    <span>تراجع</span>
+                </button>
+                <button class="footer-action-btn default-btn" id="defaultSettingsBtn">
+                    <i class="fas fa-undo"></i>
+                    <span>الإعدادات الافتراضية</span>
+                </button>
+            </div>
+            <div class="footer-status" id="saveStatus">
+                <i class="fas fa-info-circle"></i>
+                <span>جميع التعديلات مؤقتة حتى يتم حفظها</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر فتح لوحة التحكم -->
+    <button class="panel-toggle-btn" id="panelToggleBtn">
+        <i class="fas fa-brain"></i>
+        <span class="btn-tooltip">لوحة التحكم</span>
+    </button>
+
+    <div class="app-container">
+        <!-- شريط العنوان -->
+        <header class="app-header">
+            <div class="header-main">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>النظام الذكي للتنبؤ</h1>
+                </div>
+                <div class="header-controls">
+                    <div class="control-badge" id="smartControlBadge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>الذكي مفعل</span>
+                    </div>
+                    <div class="control-badge" id="autoDistributeBadge">
+                        <i class="fas fa-times-circle"></i>
+                        <span>التلقائي متوقف</span>
+                    </div>
+                    <div class="control-badge" id="riskLevelBadge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>مخاطر: منخفضة</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-stats">
+                <div class="stat-item">
+                    <i class="fas fa-coins"></i>
+                    <span>الرصيد: <strong id="headerBalance">1000</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>الفوز: <strong id="headerWins">0</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>الدقة: <strong id="headerAccuracy">0%</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-history"></i>
+                    <span>الجولات: <strong id="headerRounds">0</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-bolt"></i>
+                    <span>السلسلة: <strong id="headerStreak">0</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-fire"></i>
+                    <span>الأفضل: <strong id="headerBestStreak">0</strong></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content">
+            <!-- أشرطة التنبؤ -->
+            <div class="card bars-card" id="barsCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-bar"></i> أشرطة التنبؤ المتخصصة</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge success">
+                            <i class="fas fa-check"></i><span id="barsHits">0</span>
+                        </span>
+                        <span class="stat-badge error">
+                            <i class="fas fa-times"></i><span id="barsMisses">0</span>
+                        </span>
+                        <span class="stat-badge">
+                            <i class="fas fa-percentage"></i><span id="barsAccuracy">0%</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- الصف الأول: الكلاسيكي وماركوف -->
+                    <div class="bars-row">
+                        <div class="bar-container">
+                            <div class="bar">
+                                <div class="bar-header">
+                                    <span class="bar-name">الكلاسيكي</span>
+                                    <button class="sound-btn" data-bar="classic">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                </div>
+                                <div class="bar-slots-scroll">
+                                    <div class="bar-slots" id="barClassic"></div>
+                                </div>
+                                <div class="bar-accuracy">دقة: <span id="classicAccuracy">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar">
+                                <div class="bar-header">
+                                    <span class="bar-name">ماركوف</span>
+                                    <button class="sound-btn" data-bar="markov">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                </div>
+                                <div class="bar-slots-scroll">
+                                    <div class="bar-slots" id="barMarkov"></div>
+                                </div>
+                                <div class="bar-accuracy">دقة: <span id="markovAccuracy">0%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- الصف الثاني: العكسي والمتقدم -->
+                    <div class="bars-row">
+                        <div class="bar-container">
+                            <div class="bar">
+                                <div class="bar-header">
+                                    <span class="bar-name">العكسي</span>
+                                    <button class="sound-btn" data-bar="reverse">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                </div>
+                                <div class="bar-slots-scroll">
+                                    <div class="bar-slots" id="barReverse"></div>
+                                </div>
+                                <div class="bar-accuracy">دقة: <span id="reverseAccuracy">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar">
+                                <div class="bar-header">
+                                    <span class="bar-name">المتقدم</span>
+                                    <button class="sound-btn" data-bar="advanced">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                </div>
+                                <div class="bar-slots-scroll">
+                                    <div class="bar-slots" id="barAdvanced"></div>
+                                </div>
+                                <div class="bar-accuracy">دقة: <span id="advancedAccuracy">0%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط الإجماع -->
+            <div class="card consensus-card" id="consensusCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-users"></i> شريط الإجماع الذكي</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge success">
+                            <i class="fas fa-check"></i><span id="consensusHits">0</span>
+                        </span>
+                        <span class="stat-badge error">
+                            <i class="fas fa-times"></i><span id="consensusMisses">0</span>
+                        </span>
+                        <span class="stat-badge">
+                            <i class="fas fa-percentage"></i><span id="consensusAccuracy">0%</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="scrollable-container">
+                        <div class="consensus-slots-scroll">
+                            <div class="consensus-slots" id="consensusBar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الشريط الصوتي -->
+            <div class="card audio-card" id="audioCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-volume-up"></i> الشريط الثامن الصوتي</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge">
+                            <i class="fas fa-music"></i><span id="audioCount">0</span>
+                        </span>
+                        <span class="stat-badge">
+                            <i class="fas fa-repeat"></i><span id="repeatCount">2</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="scrollable-container">
+                        <div class="audio-slots-scroll">
+                            <div class="audio-slots" id="proAudioBar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط الخيارات الفوزية -->
+            <div class="card winning-options-card" id="winningOptionsCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-star"></i> الخيارات الفوزية الخاصة</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge success">
+                            <i class="fas fa-gem"></i><span id="specialCount">2</span>
+                        </span>
+                        <span class="stat-badge warning">
+                            <i class="fas fa-crown"></i><span id="highValueCount">4</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="scrollable-container">
+                        <div class="winning-slots-scroll">
+                            <div class="winning-slots" id="winningSlots"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط الفوز -->
+            <div class="card wins-card" id="winsCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-medal"></i> سجل الفوز</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge success">
+                            <i class="fas fa-leaf"></i><span id="vegWins">0</span>
+                        </span>
+                        <span class="stat-badge error">
+                            <i class="fas fa-drumstick-bite"></i><span id="meatWins">0</span>
+                        </span>
+                        <span class="stat-badge warning">
+                            <i class="fas fa-star"></i><span id="specialWins">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="scrollable-container">
+                        <div class="wins-strip-scroll">
+                            <div class="wins-strip" id="winsStrip"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط النتائج -->
+            <div class="card results-card" id="resultsCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> سجل النتائج</h2>
+                    <div class="results-stats">
+                        <span class="result-stat veg">
+                            <i class="fas fa-leaf"></i> <span id="vegCount">0</span>
+                        </span>
+                        <span class="result-stat meat">
+                            <i class="fas fa-drumstick-bite"></i> <span id="meatCount">0</span>
+                        </span>
+                        <span class="result-stat special">
+                            <i class="fas fa-star"></i> <span id="specialCountResult">0</span>
+                        </span>
+                        <span class="result-stat total">
+                            <i class="fas fa-list-ol"></i> <span id="totalCount">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="scrollable-container">
+                        <div class="results-strip-scroll">
+                            <div class="results-strip" id="resultsStrip"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- العجلة -->
+            <div class="card wheel-card" id="wheelCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-gamepad"></i> عجلة اللعبة الذكية</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge">
+                            <i class="fas fa-sync-alt"></i><span id="spinCount">0</span>
+                        </span>
+                        <span class="stat-badge success">
+                            <i class="fas fa-bullseye"></i><span id="hitRate">0%</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="wheel-container" id="wheelContainer">
+                        <div class="wheel" id="gameWheel"></div>
+                        <div class="wheel-center" id="wheelCenter">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                    </div>
+                    <div class="wheel-controls">
+                        <button class="center-btn spin-btn" id="spinWheelBtn">
+                            <i class="fas fa-sync-alt"></i> تدوير العجلة
+                        </button>
+                        <button class="center-btn" id="randomWinnerBtn">
+                            <i class="fas fa-random"></i> فوز عشوائي
+                        </button>
+                        <button class="center-btn stop-btn" id="stopWheelBtn" disabled>
+                            <i class="fas fa-stop"></i> إيقاف
+                        </button>
+                    </div>
+                    <div class="wheel-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>انقر على الرمز للرهان | انقر على الكأس للفوز | اضغط تدوير للعجلة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الخيارات السريعة -->
+            <div class="card quick-actions-card" id="quickActionsCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-bolt"></i> اختيارات فورية</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge">
+                            <i class="fas fa-bolt"></i><span id="quickActionsCount">10</span>
+                        </span>
+                        <span class="stat-badge warning">
+                            <i class="fas fa-fire"></i><span id="hotStreak">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="quick-buttons" id="quickActions">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                    <p class="quick-hint"><i class="fas fa-mouse-pointer"></i> اضغط للفوز المباشر | اضغط مطولاً للرهان</p>
+                </div>
+            </div>
+
+            <!-- الشريط الثامن الكامل -->
+            <div class="card pro-card" id="proCard">
+                <div class="card-header">
+                    <h2><i class="fas fa-crown"></i> الشريط الثامن الذكي</h2>
+                    <div class="card-stats">
+                        <span class="stat-badge success">
+                            <i class="fas fa-check"></i><span id="proHits">0</span>
+                        </span>
+                        <span class="stat-badge error">
+                            <i class="fas fa-times"></i><span id="proMisses">0</span>
+                        </span>
+                        <span class="stat-badge">
+                            <i class="fas fa-percentage"></i><span id="proAccuracy">0%</span>
+                        </span>
+                        <span class="stat-badge warning">
+                            <i class="fas fa-fire"></i><span id="proStreak">0</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <!-- التوقعات المرئية -->
+                    <div class="visual-predictions">
+                        <h3><i class="fas fa-chart-line"></i> توقعات الذكاء الاصطناعي</h3>
+                        <div class="predictions-grid" id="predictionsGrid"></div>
+                    </div>
+
+                    <!-- نظام التوزيع الذكي -->
+                    <div class="distribution-system">
+                        <h3><i class="fas fa-robot"></i> نظام التوزيع الذكي</h3>
+                        
+                        <div class="distribution-controls">
+                            <div class="bet-amount">
+                                <label for="betAmount">
+                                    <i class="fas fa-coins"></i>
+                                    مبلغ الرهان:
+                                </label>
+                                <div class="amount-controls">
+                                    <input type="number" id="betAmount" class="bet-input" value="100" min="10" max="1000">
+                                    <select id="betPreset" class="preset-select">
+                                        <option value="10">10</option>
+                                        <option value="50">50</option>
+                                        <option value="100" selected>100</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="distribution-type">
+                                <label>نوع التوزيع:</label>
+                                <select id="distributionType" class="type-select">
+                                    <option value="auto">تلقائي (ذكي)</option>
+                                    <option value="balanced">متوازن</option>
+                                    <option value="aggressive">هجومي</option>
+                                    <option value="conservative">محافظ</option>
+                                    <option value="random">عشوائي</option>
+                                    <option value="pattern">حسب النمط</option>
+                                </select>
+                            </div>
+
+                            <div class="weight-controls">
+                                <div class="weight-slider">
+                                    <label>🥦 خضار</label>
+                                    <input type="range" id="vegWeight" min="0" max="100" value="60">
+                                    <span id="vegWeightValue">60%</span>
+                                </div>
+                                <div class="weight-slider">
+                                    <label>🥩 لحوم</label>
+                                    <input type="range" id="meatWeight" min="0" max="100" value="40">
+                                    <span id="meatWeightValue">40%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="distribution-actions">
+                            <button class="distribute-btn primary" id="distributeBtn">
+                                <i class="fas fa-share-alt"></i>
+                                توزيع ذكي
+                            </button>
+                            <button class="distribute-btn secondary" id="autoDistributeBtn">
+                                <i class="fas fa-robot"></i>
+                                تلقائي
+                            </button>
+                            <button class="distribute-btn warning" id="smartDistributeBtn">
+                                <i class="fas fa-brain"></i>
+                                ذكي
+                            </button>
+                            <button class="distribute-btn" id="clearBetsBtn">
+                                <i class="fas fa-trash"></i>
+                                مسح
+                            </button>
+                        </div>
+
+                        <div class="distribution-preview" id="distributionPreview"></div>
+                    </div>
+
+                    <!-- إحصائيات النظام -->
+                    <div class="system-stats">
+                        <h3><i class="fas fa-tachometer-alt"></i> إحصائيات النظام</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon wallet">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">الرصيد</span>
+                                    <span class="stat-value" id="currentBalance">1000</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon trophy">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">الفوز</span>
+                                    <span class="stat-value" id="currentWins">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon loss">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">الخسارة</span>
+                                    <span class="stat-value" id="currentLosses">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon risk">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">المخاطرة</span>
+                                    <span class="stat-value" id="currentRisk">منخفضة</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon accuracy">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">الدقة</span>
+                                    <span class="stat-value" id="currentAccuracy">0%</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon streak">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-label">السلسلة</span>
+                                    <span class="stat-value" id="currentStreak">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- شريط التحكم السفلي -->
+        <footer class="control-footer">
+            <div class="footer-main">
+                <div class="quick-controls">
+                    <button class="footer-btn" id="resetGameBtn">
+                        <i class="fas fa-redo"></i>
+                        <span>إعادة اللعبة</span>
+                    </button>
+                    <button class="footer-btn" id="exportDataBtn">
+                        <i class="fas fa-download"></i>
+                        <span>تصدير البيانات</span>
+                    </button>
+                    <button class="footer-btn" id="importDataBtn">
+                        <i class="fas fa-upload"></i>
+                        <span>استيراد البيانات</span>
+                    </button>
+                    <button class="footer-btn" id="topUpBalanceBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>+1000 رصيد</span>
+                    </button>
+                    <button class="footer-btn" id="showReportsBtn">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>التقارير</span>
+                    </button>
+                    <button class="footer-btn" id="toggleSoundBtn">
+                        <i class="fas fa-volume-up"></i>
+                        <span>الصوت</span>
+                    </button>
+                    <button class="footer-btn" id="helpBtn">
+                        <i class="fas fa-question-circle"></i>
+                        <span>المساعدة</span>
+                    </button>
+                </div>
+
+                <!-- مؤشر المخاطر -->
+                <div class="risk-indicator">
+                    <div class="risk-header">
+                        <span class="risk-label">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            مستوى المخاطرة:
+                        </span>
+                        <span class="risk-value" id="riskLevelValue">آمن (0%)</span>
+                    </div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" id="riskFill"></div>
+                    </div>
+                    <div class="risk-tip" id="riskTip">
+                        المخاطرة منخفضة، يمكنك المراهنة بأمان
+                    </div>
+                </div>
+            </div>
+
+            <!-- مؤشر الجلسة -->
+            <div class="session-indicator">
+                <div class="session-info">
+                    <i class="fas fa-clock"></i>
+                    <span>مدة الجلسة: <span id="sessionTime">00:00</span></span>
+                </div>
+                <div class="session-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sessionProgress"></div>
+                    </div>
+                    <span class="progress-label">التقدم</span>
+                </div>
+                <div class="session-stats">
+                    <span class="session-stat">
+                        <i class="fas fa-bolt"></i>
+                        <span>السلسلة: <strong id="sessionStreak">0</strong></span>
+                    </span>
+                    <span class="session-stat">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>الدقة: <strong id="sessionAccuracy">0%</strong></span>
+                    </span>
+                </div>
+            </div>
+        </footer>
+
+        <!-- النوافذ المنبثقة -->
+        <div class="modal" id="winnerModal">
+            <div class="modal-content">
+                <h3><i class="fas fa-trophy"></i> تأكيد الفائز</h3>
+                <div class="modal-body" id="winnerDetails"></div>
+                <div class="modal-buttons">
+                    <button class="modal-btn success" id="confirmWinnerBtn">
+                        <i class="fas fa-check"></i> تأكيد الفوز
+                    </button>
+                    <button class="modal-btn cancel" id="cancelWinnerBtn">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="backupModal">
+            <div class="modal-content">
+                <h3><i class="fas fa-database"></i> إدارة النسخ الاحتياطي</h3>
+                <div class="modal-body">
+                    <div class="backup-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableAutoBackup">
+                            <span>تفعيل التسجيل التلقائي</span>
+                        </label>
+                        <div class="backup-info">
+                            <p><i class="fas fa-info-circle"></i> آخر نسخة: <span id="lastBackupTimeModal">لا يوجد</span></p>
+                            <p><i class="fas fa-hdd"></i> عدد الجولات المسجلة: <span id="backupRoundsCount">0</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn" id="exportBackupModalBtn">
+                        <i class="fas fa-file-export"></i> تصدير النسخة
+                    </button>
+                    <button class="modal-btn" id="importBackupModalBtn">
+                        <i class="fas fa-file-import"></i> استيراد نسخة
+                    </button>
+                    <button class="modal-btn cancel" id="closeBackupModalBtn">
+                        <i class="fas fa-times"></i> إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- نافذة التقارير -->
+        <div class="modal" id="reportsModal">
+            <div class="modal-content wide">
+                <h3><i class="fas fa-chart-bar"></i> تقارير الأداء المتقدمة</h3>
+                <div class="modal-body">
+                    <div class="reports-content" id="reportsContent">
+                        <p>جار تحميل التقارير...</p>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn cancel" id="closeReportsModalBtn">
+                        <i class="fas fa-times"></i> إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- نافذة المساعدة -->
+        <div class="modal" id="helpModal">
+            <div class="modal-content wide">
+                <h3><i class="fas fa-question-circle"></i> مركز المساعدة</h3>
+                <div class="modal-body">
+                    <div class="help-content" id="helpContent">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn cancel" id="closeHelpModalBtn">
+                        <i class="fas fa-times"></i> إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- حاوية الإشعارات -->
+    <div class="notifications-container" id="notificationsContainer"></div>
+
+    <!-- مكتبات JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
